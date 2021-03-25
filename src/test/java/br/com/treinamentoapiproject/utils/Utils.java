@@ -1,4 +1,4 @@
-package br.com.restassuredapitesting.utils;
+package br.com.treinamentoapiproject.utils;
 
 public class Utils {
 
