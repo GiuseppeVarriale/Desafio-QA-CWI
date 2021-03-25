@@ -9,5 +9,7 @@ public class BaseTest {
     @BeforeClass
     public static void setup(){
         RestAssured.baseURI= "https://treinamento-api.herokuapp.com/";
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+
     }
 }
