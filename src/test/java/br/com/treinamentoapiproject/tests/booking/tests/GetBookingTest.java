@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
@@ -35,6 +37,39 @@ public class GetBookingTest extends BaseTest {
     }
 
     @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar uma reserva específica")
+    public void validateSpecificBooking() throws Exception {
+
+        getBookingRequest.getSpecificBooking(getBookingRequest.getAnExistingBookingId())
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0));
+    }
+
+    @Test
+    @Severity(SeverityLevel.BLOCKER)
+    @Category(Contract.class)
+    @DisplayName("Garantir o contrato do retorno de reserva específica")
+    public void garantirContratoListaReservaEspecífica() throws Exception {
+        getBookingRequest.getSpecificBooking(getBookingRequest.getAnExistingBookingId()).then()
+                .statusCode(200)
+                .assertThat()
+                .body(
+                        matchesJsonSchema(
+                                new File(
+                                        Utils.getContractsBasePath("booking", "booking")
+                                        // Campo additionalneeds está retornando apenas quando tem info no db,
+                                        // verificar com equipe se este campo deveria ser documentado como opcional na
+                                        // e criação de reserva, possível bug na api
+                                )
+                        )
+                );
+    }
+
+    @Test
     @Severity(SeverityLevel.BLOCKER)
     @Category(Contract.class)
     @DisplayName("Garantir o contrato do retorno da lista de reservas")
@@ -50,5 +85,7 @@ public class GetBookingTest extends BaseTest {
                         )
                 );
     }
+
+
 
 }
