@@ -13,7 +13,7 @@ public class PutBookingRequest {
 
 
     @Step("Alterar uma reserva com token")
-    public Response alterarReservaComToken(int id, JSONObject payload){
+    public Response updateBookingWithToken(int id, JSONObject payload){
         return given()
                 .header("Content-type", "application/json")
                 .header("Accept", "application/json")

@@ -28,12 +28,12 @@ public class PutBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Alterar uma reserva utilizando token")
-    public void validarAlterarUmaReservaUtilizandoToken()  throws Exception{
+    public void updateCurrentBookingUsingToken()  throws Exception{
 
-        int primeiroId = getBookingRequest.allBookings().then().statusCode(200)
+        int firstId = getBookingRequest.allBookings().then().statusCode(200)
                 .extract().path("[0].bookingid");
 
-        putBookingRequest.alterarReservaComToken(primeiroId, Utils.validPayloadBooking()).then()
+        putBookingRequest.updateBookingWithToken(firstId, Utils.validPayloadBooking()).then()
                 .statusCode(200)
                 .time(lessThan(2L), TimeUnit.SECONDS)
                 .body("size()",greaterThan(0));
