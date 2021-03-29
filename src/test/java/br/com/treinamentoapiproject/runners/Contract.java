@@ -1,6 +1,7 @@
 package br.com.treinamentoapiproject.runners;
 
 import br.com.treinamentoapiproject.tests.auth.tests.PostAuthTest;
+import br.com.treinamentoapiproject.tests.booking.tests.DeleteBookingTest;
 import br.com.treinamentoapiproject.tests.booking.tests.GetBookingTest;
 import br.com.treinamentoapiproject.tests.booking.tests.PutBookingTest;
 import org.junit.experimental.categories.Categories;
@@ -12,7 +13,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         GetBookingTest.class,
         PutBookingTest.class,
-        PostAuthTest.class
+        PostAuthTest.class,
+        DeleteBookingTest.class,
+        PostAuthTest.class,
 })
 public class Contract {
 }

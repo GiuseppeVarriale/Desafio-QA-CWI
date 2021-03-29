@@ -8,18 +8,27 @@ import br.com.treinamentoapiproject.utils.Utils;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
+import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.SimpleFormatter;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 
 @Feature("Reservas")
 public class GetBookingTest extends BaseTest {
@@ -29,7 +38,7 @@ public class GetBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Lista IDs das Reservas")
-    public void validarIdsDasRerservas() throws Exception{
+    public void listBookingIds() throws Exception{
         getBookingRequest.allBookings().then()
                 .statusCode(200)
                 .time(lessThan(2L), TimeUnit.SECONDS)
@@ -40,7 +49,7 @@ public class GetBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Listar uma reserva específica")
-    public void validateSpecificBooking() throws Exception {
+    public void listSpecificBooking() throws Exception {
 
         getBookingRequest.getSpecificBooking(getBookingRequest.getAnExistingBookingId())
                 .then()
@@ -50,10 +59,259 @@ public class GetBookingTest extends BaseTest {
     }
 
     @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar Id reservas usando filtro firstname")
+    public void listsIdFilteredByFirstname() throws Exception {
+
+        Map<String , String> existingBookingDataMap = getBookingRequest.getExitingDataMapForFilter();
+        Map<String , String> filtersMap = new HashMap<>();
+        String firstname = existingBookingDataMap.get("firstname");
+        filtersMap.put("firstname", firstname);
+
+        List<Integer> ids = getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .extract()
+                .jsonPath().getList("bookingid");
+
+        Random rand = new Random();
+
+        int samples = 0;
+        if(ids.size() <=2 && ids.size() >0){
+            samples = ids.size();
+        } else {
+            samples = 2;
+        }
+
+        for(int i = 0; i < samples; i++){
+            int id= ids.get(rand.nextInt(ids.size()));
+        getBookingRequest.getSpecificBooking(id)
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .body("firstname", equalTo(firstname));
+        }
+
+
+
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar Id reservas usando filtro lastname")
+    public void listsIdFilteredByLastname() throws Exception {
+
+        Map<String , String> existingBookingDataMap = getBookingRequest.getExitingDataMapForFilter();
+        Map<String , String> filtersMap = new HashMap<>();
+        String lastname = existingBookingDataMap.get("lastname");
+        filtersMap.put("lastname",lastname);
+
+        List<Integer> ids = getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .extract()
+                .jsonPath().getList("bookingid");
+
+        Random rand = new Random();
+
+        int samples = 0;
+        if(ids.size() <=2 && ids.size() >0){
+            samples = ids.size();
+        } else {
+            samples = 2;
+        }
+
+        for(int i = 0; i < samples; i++){
+            int id= ids.get(rand.nextInt(ids.size()));
+            getBookingRequest.getSpecificBooking(id)
+                    .then()
+                    .assertThat()
+                    .statusCode(200)
+                    .body("lastname", equalTo(lastname));
+        }
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar Id reservas usando filtro checkin")
+    public void listsIdFilteredBycheckin() throws Exception {
+
+        Map<String , String> existingBookingDataMap = getBookingRequest.getExitingDataMapForFilter();
+        Map<String , String> filtersMap = new HashMap<>();
+        String existingBookingId = existingBookingDataMap.get("bookingid");
+        String checkinToFilter = existingBookingDataMap.get("checkin");
+        filtersMap.put("checkin",checkinToFilter);
+
+        List<Integer> ids = getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .extract().jsonPath().getList("bookingid");
+
+        Random rand = new Random();
+
+        int samples = 0;
+
+        if(ids.size() <=2 && ids.size() >0){
+            samples = ids.size();
+        } else {
+            samples = 2;
+        }
+
+        for(int i = 0; i < samples; i++){
+            int id= ids.get(rand.nextInt(ids.size()));
+            String filterResultCheckin = getBookingRequest.getSpecificBooking(id)
+                    .then()
+                    .assertThat()
+                    .statusCode(200)
+                    .body("size()",greaterThan(0))
+                    .extract().path("bookingdates.checkin");
+            //valida se a data das amostras é  maior ou igual a data enviada no filtro
+            assertTrue(Utils.dateIsAfterOrEqualThan(filterResultCheckin, checkinToFilter));
+        }
+            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+            // validando que está também retornando data de checkin igual a enviada no filtro
+            assertTrue(ids.contains(existingBookingId));
+        //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
+    }
+
+
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar Id reservas usando filtro checkout")
+    public void listsIdFilteredBycheckout() throws Exception {
+
+        Map<String , String> existingBookingDataMap = getBookingRequest.getExitingDataMapForFilter();
+        Map<String , String> filtersMap = new HashMap<>();
+        String checkoutToFilter = existingBookingDataMap.get("checkout");
+        String existingBookingId = existingBookingDataMap.get("bookingid");
+        filtersMap.put("checkout",checkoutToFilter);
+
+        List <Integer> ids = getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .extract().jsonPath().getList("bookingid");
+
+        Random rand = new Random();
+
+        int samples = 0;
+        if(ids.size() <=2 && ids.size() >0){
+            samples = ids.size();
+        } else {
+            samples = 2;
+        }
+
+        for(int i = 0; i < samples; i++){
+            int id= ids.get(rand.nextInt(ids.size()));
+            String filterResultCheckout = getBookingRequest.getSpecificBooking(id)
+                    .then()
+                    .assertThat()
+                    .statusCode(200)
+                    .body("size()",greaterThan(0))
+                    .extract().path("bookingdates.checkout");
+
+            //valida se a data das amostras é  menor ou igual a data enviada no filtro
+
+            assertTrue(Utils.dateIsBeforeOrEqualThan(filterResultCheckout, checkoutToFilter)); //alinhar com equipe
+            //provavelmente documentação incorreta, não faz muito sentido eu filtrar maior que a data, seria reduntante
+            // filtro checkin...
+
+            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+            // validando que está também retornando data de checkin igual a enviada no filtro
+            assertTrue(ids.contains(existingBookingId));
+            //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
+        }
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Listar Id reservas usando filtro name, checkin e checkout ")
+    public void listsIdFilteredByNameCheckinCheckout() throws Exception {
+
+        Map<String , String> existingBookingDataMap = getBookingRequest.getExitingDataMapForFilter();
+        Map<String , String> filtersMap = new HashMap<>();
+        String existingBookingId = existingBookingDataMap.get("bookingid");
+
+
+        String nameToFilter =  existingBookingDataMap.get("firstname");
+        String checkinToFilter = existingBookingDataMap.get("checkin");
+        String checkoutToFilter = existingBookingDataMap.get("checkout");
+
+        filtersMap.put("name", nameToFilter);
+        //Alinhar com equipe, este campos não existe na documentação da api e está retornando todos ids
+
+        filtersMap.put("checkin",checkinToFilter);
+        filtersMap.put("checkout",checkoutToFilter);
+
+
+        List <Integer> ids = getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .extract().jsonPath().getList("bookingid");
+
+        Random rand = new Random();
+
+        int samples = 0;
+        if(ids.size() <=2 && ids.size() >0){
+            samples = ids.size();
+        } else {
+            samples = 2;
+        }
+
+        for(int i = 0; i < samples; i++){
+            int id= ids.get(rand.nextInt(ids.size()));
+            ValidatableResponse result = getBookingRequest.getSpecificBooking(id)
+                    .then()
+                    .assertThat()
+                    .statusCode(200)
+                    .body("size()",greaterThan(0));
+
+
+            String filterResultCheckin = result.extract().path("bookingdates.checkin");
+            String filterResultCheckout = result.extract().path("bookingdates.checkout");
+
+            String filterResultFirstname = result.extract().path("firstname");
+            String filterResultlastname = result.extract().path("lastname");
+
+            //valida se alguma das amostras contém o requisitado no filtro name em alguma parte do nome
+            assertTrue(filterResultFirstname.contains(nameToFilter)
+                    || filterResultlastname.contains(nameToFilter));
+
+            //valida se a data das amostras é  maior ou igual a data enviada no filtro
+            assertTrue(Utils.dateIsAfterOrEqualThan(filterResultCheckin, checkinToFilter));
+
+            //valida se a data das amostras é  menor ou igual a data enviada no filtro
+            assertTrue(Utils.dateIsBeforeOrEqualThan(filterResultCheckout, checkoutToFilter)); //alinhar com equipe
+            //provavelmente documentação incorreta, não faz muito sentido eu filtrar maior que a data, seria reduntante
+            // filtro checkin...
+
+            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+            // validando que está também retornando data de checkin igual a enviada no filtro
+            assertTrue(ids.contains(existingBookingId));
+            //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
+        }
+    }
+
+    @Test
     @Severity(SeverityLevel.BLOCKER)
     @Category(Contract.class)
     @DisplayName("Garantir o contrato do retorno de reserva específica")
-    public void garantirContratoListaReservaEspecífica() throws Exception {
+    public void specificBookingContractTest() throws Exception {
         getBookingRequest.getSpecificBooking(getBookingRequest.getAnExistingBookingId()).then()
                 .statusCode(200)
                 .assertThat()
@@ -73,7 +331,7 @@ public class GetBookingTest extends BaseTest {
     @Severity(SeverityLevel.BLOCKER)
     @Category(Contract.class)
     @DisplayName("Garantir o contrato do retorno da lista de reservas")
-    public void garantirContratoListaReserva() throws Exception{
+    public void BookingsIdsListContractTest() throws Exception{
         getBookingRequest.allBookings().then()
                 .statusCode(200)
                 .assertThat()
