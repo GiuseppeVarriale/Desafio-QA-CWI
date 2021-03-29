@@ -22,7 +22,7 @@ public class GetPingTest extends BaseTest {
     @DisplayName("Fazer teste de HealthCheck, endpoint ping da api")
     public void healthCheckPing() throws Exception {
         getPingRequest.pingApi().then()
-                .statusCode(201) //Deveria retornar 200, está retornado 201, alinhar com equipe do projeto/abrir bug
+                .statusCode(200) //Deveria retornar 200, está retornado 201, alinhar com equipe do projeto/abrir bug
                 .time(lessThan(2L), TimeUnit.SECONDS)
                 .body("$",hasKey("ok")); //Deve retornar o campo OK.
 
