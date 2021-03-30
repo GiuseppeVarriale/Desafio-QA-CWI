@@ -24,7 +24,7 @@ public class GetPingTest extends BaseTest {
         getPingRequest.pingApi().then()
                 .statusCode(200) //Deveria retornar 200, está retornado 201, alinhar com equipe do projeto/abrir bug
                 .time(lessThan(2L), TimeUnit.SECONDS)
-                .body("$",hasKey("ok")); //Deve retornar o campo OK.
+                .body("$", hasKey("ok")); //Deve retornar o campo OK.
 
     }
 }

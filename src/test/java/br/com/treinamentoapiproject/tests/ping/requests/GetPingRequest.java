@@ -9,7 +9,7 @@ public class GetPingRequest {
 
 
     @Step("Fazer chamada no endpoint de HealthCheck da api(ping).")
-    public Response pingApi(){
+    public Response pingApi() {
         return given()
                 .get("ping");
 

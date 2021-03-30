@@ -1,8 +1,6 @@
 package br.com.treinamentoapiproject.runners;
 
 
-import br.com.treinamentoapiproject.tests.auth.tests.PostAuthTest;
-import br.com.treinamentoapiproject.tests.booking.requests.PostBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.tests.DeleteBookingTest;
 import br.com.treinamentoapiproject.tests.booking.tests.GetBookingTest;
 import br.com.treinamentoapiproject.tests.booking.tests.PostBookingTest;

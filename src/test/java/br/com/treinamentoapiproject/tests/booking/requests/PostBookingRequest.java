@@ -9,7 +9,7 @@ import static io.restassured.RestAssured.given;
 public class PostBookingRequest {
 
     @Step("Criar uma reserva")
-    public Response createBooking(JSONObject payload){
+    public Response createBooking(JSONObject payload) {
         return given()
                 .header("Content-type", "application/json")
                 .when()

@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.lessThan;
 public class GetBookingRequest {
 
     @Step("Buscar todas as reservas.")
-    public Response allBookings(){
+    public Response allBookings() {
         return given()
                 .header("Content-Type", "application/json")
                 .when()
@@ -27,24 +27,24 @@ public class GetBookingRequest {
     @Step("Buscar dados válidos para usar no teste de filtro ")
     public Map<String, String> getExitingDataMapForFilter() throws Exception {
         int bookingId = this.getAnExistingBookingId();
-        Map<String,?> bookingMap = this.getSpecificBooking(bookingId)
+        Map<String, ?> bookingMap = this.getSpecificBooking(bookingId)
                 .then()
                 .statusCode(200)
                 .time(lessThan(2L), TimeUnit.SECONDS)
-                .body("size()",greaterThan(0))
+                .body("size()", greaterThan(0))
                 .contentType(ContentType.JSON).extract().jsonPath().getJsonObject("");
 
 
         String firstname = bookingMap.get("firstname").toString();
         String lastname = bookingMap.get("lastname").toString();
-        String checkin =((Map)bookingMap.get("bookingdates")).get("checkin").toString();
-        String checkout = ((Map)bookingMap.get("bookingdates")).get("checkin").toString();
-        Map<String, String > existinBookingDataMap = new HashMap<String, String>();
+        String checkin = ((Map) bookingMap.get("bookingdates")).get("checkin").toString();
+        String checkout = ((Map) bookingMap.get("bookingdates")).get("checkin").toString();
+        Map<String, String> existinBookingDataMap = new HashMap<String, String>();
         existinBookingDataMap.put("firstname", firstname);
         existinBookingDataMap.put("lastname", lastname);
         existinBookingDataMap.put("checkin", checkin);
         existinBookingDataMap.put("checkout", checkout);
-        existinBookingDataMap.put("bookingid", String.valueOf(bookingId)  );
+        existinBookingDataMap.put("bookingid", String.valueOf(bookingId));
         return existinBookingDataMap;
 
 
@@ -52,7 +52,7 @@ public class GetBookingRequest {
 
 
     @Step("Buscar reservas com filtros.")
-    public Response getFilteredBookingIdList(Map<String,String> filtersMap){
+    public Response getFilteredBookingIdList(Map<String, String> filtersMap) {
         String path = "booking?";
         path = path + filtersMap.entrySet().stream()
                 .map((filter) -> filter.getKey() + "=" + filter.getValue()).collect(Collectors.joining("&"));
@@ -76,7 +76,7 @@ public class GetBookingRequest {
     }
 
     @Step("Buscar reservas Específica.")
-    public Response getSpecificBooking(int id){
+    public Response getSpecificBooking(int id) {
         return given()
                 .header("Content-Type", "application/json")
                 .when()

@@ -3,6 +3,7 @@ package br.com.treinamentoapiproject.tests.auth.requests;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.json.simple.JSONObject;
+
 import static io.restassured.RestAssured.given;
 
 public class PostAuthRequest {

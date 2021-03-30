@@ -13,6 +13,7 @@ import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,15 +22,15 @@ import static org.hamcrest.Matchers.*;
 
 @Feature("Reservas")
 public class DeleteBookingTest extends BaseTest {
-        DeleteBookingRequest deleteBookingRequest = new DeleteBookingRequest();
-        PostBookingRequest postBookingRequest = new PostBookingRequest();
-        GetBookingRequest getbookingRequest = new GetBookingRequest();
+    DeleteBookingRequest deleteBookingRequest = new DeleteBookingRequest();
+    PostBookingRequest postBookingRequest = new PostBookingRequest();
+    GetBookingRequest getbookingRequest = new GetBookingRequest();
 
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Excluir uma reserva utilizando token")
-    public void deleteBookingUsingToken()  throws Exception{
+    public void deleteBookingUsingToken() throws Exception {
 
         int createdBookingId = postBookingRequest.createBooking(Utils.validPayloadBooking())
                 .then().statusCode(201)
@@ -50,7 +51,7 @@ public class DeleteBookingTest extends BaseTest {
     @Severity(SeverityLevel.BLOCKER)
     @Category(E2e.class)
     @DisplayName("Não permitir excluir uma reserva sem utilizar autenticação")
-    public void deleteBookingNoAuthentication()  throws Exception{
+    public void deleteBookingNoAuthentication() throws Exception {
 
         int createdBookingId = postBookingRequest.createBooking(Utils.validPayloadBooking())
                 .then().statusCode(201)
@@ -70,7 +71,7 @@ public class DeleteBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
     @DisplayName("Exibir erro 404 ao excluir uma reserva Inexistente")
-    public void deleteInexistentBooking()  throws Exception{
+    public void deleteInexistentBooking() throws Exception {
 
         List<Integer> ids = getbookingRequest.allBookings()
                 .then()
