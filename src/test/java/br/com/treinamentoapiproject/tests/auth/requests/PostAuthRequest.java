@@ -3,7 +3,6 @@ package br.com.treinamentoapiproject.tests.auth.requests;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.json.simple.JSONObject;
-
 import static io.restassured.RestAssured.given;
 
 public class PostAuthRequest {
@@ -12,7 +11,7 @@ public class PostAuthRequest {
     public Response token() {
         JSONObject payload = new JSONObject();
         payload.put("username", "admin");
-        payload.put("password","password123");
+        payload.put("password", "password123");
 
         return given()
                 .header("Content-Type", "application/json")
@@ -23,6 +22,7 @@ public class PostAuthRequest {
 
     @Step("Retornar o token")
     public String getToken() {
-        return "token=" + this.token().then().statusCode(200).extract().path("token");
+        return "token="
+                + this.token().then().statusCode(200).extract().path("token");
     }
 }
