@@ -298,6 +298,39 @@ public class GetBookingTest extends BaseTest {
     }
 
     @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Exibir erro na tentativa de filtrar com filtro mal formatado")
+    public void listIdsBadFilterFormatTest() throws Exception {
+
+        Map<String, String> filtersMap = new HashMap<>();
+        filtersMap.put("checkin", "20201102");
+
+
+        getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(500)
+                .time(lessThan(2L), TimeUnit.SECONDS);
+
+        filtersMap.clear();
+        filtersMap.put("checkout", "20201102");
+
+        getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(500)
+                .time(lessThan(2L), TimeUnit.SECONDS);
+
+        filtersMap.put("checkin", "20-2011-02");
+
+        getBookingRequest.getFilteredBookingIdList(filtersMap)
+                .then()
+                .statusCode(500)
+                .time(lessThan(2L), TimeUnit.SECONDS);
+
+    }
+
+
+    @Test
     @Severity(SeverityLevel.BLOCKER)
     @Category(Contract.class)
     @DisplayName("Garantir o contrato do retorno de reserva específica")
