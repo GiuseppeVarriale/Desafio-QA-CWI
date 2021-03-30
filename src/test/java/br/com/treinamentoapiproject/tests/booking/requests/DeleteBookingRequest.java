@@ -12,7 +12,7 @@ public class DeleteBookingRequest {
 
 
     @Step("Excluir uma reserva com token")
-    public Response excluirReservaComToken(int id){
+    public Response deleteBookingUsingToken(int id){
         return given()
                 .header("Content-type", "application/json")
                 .header("Cookie", postAuthRequest.getToken())
