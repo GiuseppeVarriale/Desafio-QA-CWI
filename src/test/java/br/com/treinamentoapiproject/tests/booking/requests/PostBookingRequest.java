@@ -17,5 +17,16 @@ public class PostBookingRequest {
                 .post("booking");
     }
 
+    @Step("Criar uma reserva com Header Incorreto")
+    public Response createBookingWrongAcceptHeader(JSONObject payload) {
+        return given()
+                .header("Content-type", "application/json")
+                .header("Accept", "crazyHeaderText")
+                .when()
+                .body(payload.toString())
+                .post("booking");
+    }
+
+
 
 }
