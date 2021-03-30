@@ -12,10 +12,6 @@ import org.junit.runners.Suite;
 @Categories.IncludeCategory(br.com.treinamentoapiproject.suites.Contract.class)
 @Suite.SuiteClasses({
         GetBookingTest.class,
-        PutBookingTest.class,
-        PostAuthTest.class,
-        DeleteBookingTest.class,
-        PostAuthTest.class,
 })
 public class Contract {
 }
