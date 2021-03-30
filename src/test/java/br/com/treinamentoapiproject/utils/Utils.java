@@ -1,11 +1,14 @@
 package br.com.treinamentoapiproject.utils;
 
 import com.github.javafaker.Faker;
+import io.qameta.allure.Step;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.time.DateUtils;
 import org.json.simple.JSONObject;
+
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,6 +24,7 @@ public class Utils {
                 + ".json";
     }
 
+    @Step("Gerar payload com Faker")
     public static JSONObject validPayloadBooking() throws Exception {
         JSONObject payload = new JSONObject();
         JSONObject bookingDates = new JSONObject();
@@ -47,6 +51,7 @@ public class Utils {
         return payload;
     }
 
+
     public static Boolean dateIsBeforeOrEqualThan(String toCompare, String control) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date dateToCompare = format.parse(toCompare);
@@ -63,4 +68,15 @@ public class Utils {
 
         return dateToCompare.after(dateControl) || dateToCompare.equals(control);
     }
+
+    @Step("Codificar e retornar basic Authorization ")
+    public static String basicAuthorizationEncode(String username, String password) {
+
+        String auth = username + ":" + password;
+        byte[] encodedAuth = Base64.encodeBase64(
+                auth.getBytes(Charset.forName("US-ASCII")));
+        return "Basic " + new String(encodedAuth);
+
+    }
+
 }
