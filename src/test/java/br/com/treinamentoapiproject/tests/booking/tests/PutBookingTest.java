@@ -53,4 +53,27 @@ public class PutBookingTest extends BaseTest {
                 .body("additionalneeds", equalTo(payload.get("additionalneeds")));
     }
 
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(Acceptance.class)
+    @DisplayName("Alterar uma reserva utilizando basic authorization")
+    public void updateCurrentBookingUsingBasicAuth()  throws Exception{
+
+        JSONObject payload = Utils.validPayloadBooking();
+        int id = getBookingRequest.getAnExistingBookingId();
+
+        putBookingRequest.updateBookingUsingBasicAuth(id, payload)
+                .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS)
+                .body("size()",greaterThan(0))
+                .body("firstname", equalTo(payload.get("firstname")))
+                .body("lastname", equalTo(payload.get("lastname")))
+                .body("depositpaid", equalTo(payload.get("depositpaid")))
+                .body("bookingdates.checkin", equalTo(((Map)payload.get("bookingdates")).get("checkin")))
+                .body("bookingdates.checkout", equalTo(((Map)payload.get("bookingdates")).get("checkout")))
+                .body("additionalneeds", equalTo(payload.get("additionalneeds")));
+    }
+
+
 }
