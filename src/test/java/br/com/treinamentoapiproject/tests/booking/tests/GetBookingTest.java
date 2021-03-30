@@ -127,6 +127,9 @@ public class GetBookingTest extends BaseTest {
                     .statusCode(200)
                     .body("lastname", equalTo(lastname));
         }
+        //valida se a id do registro usado para gerar o nome enviado no filtro está presente,
+        assertTrue(ids.contains(existingBookingDataMap.get("bookingid")));
+
     }
 
     @Test
@@ -218,12 +221,12 @@ public class GetBookingTest extends BaseTest {
             assertTrue(Utils.dateIsBeforeOrEqualThan(filterResultCheckout, checkoutToFilter)); //alinhar com equipe
             //provavelmente documentação incorreta, não faz muito sentido eu filtrar maior que a data, seria reduntante
             // filtro checkin...
-
-            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
-            // validando que está também retornando data de checkin igual a enviada no filtro
-            assertTrue(ids.contains(existingBookingId));
-            //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
         }
+
+        //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+        // validando que está também retornando data de checkin igual a enviada no filtro
+        assertTrue(ids.contains(existingBookingId));
+        //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
     }
 
     @Test
@@ -306,12 +309,12 @@ public class GetBookingTest extends BaseTest {
             assertTrue(Utils.dateIsBeforeOrEqualThan(filterResultCheckout, checkoutToFilter)); //alinhar com equipe
             //provavelmente documentação incorreta, não faz muito sentido eu filtrar maior que a data, seria reduntante
             // filtro checkin...
-
-            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
-            // validando que está também retornando data de checkin igual a enviada no filtro
-            assertTrue(ids.contains(existingBookingId));
-            //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
         }
+
+        //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+        // validando que está também retornando data de checkin igual a enviada no filtro
+        assertTrue(ids.contains(existingBookingId));
+        //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
     }
 
     @Test
@@ -375,12 +378,12 @@ public class GetBookingTest extends BaseTest {
             assertTrue(Utils.dateIsBeforeOrEqualThan(filterResultCheckout, checkoutToFilter)); //alinhar com equipe
             //provavelmente documentação incorreta, não faz muito sentido eu filtrar maior que a data, seria reduntante
             // filtro checkin...
-
-            //valida se a id do dado usado para retirar a data enviada no filtro está presente,
-            // validando que está também retornando data de checkin igual a enviada no filtro
-            assertTrue(ids.contains(existingBookingId));
-            //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
         }
+
+        //valida se a id do dado usado para retirar a data enviada no filtro está presente,
+        // validando que está também retornando data de checkin igual a enviada no filtro
+        assertTrue(ids.contains(existingBookingId));
+        //verificar com a equipe, não está retornando no filtro booking com data igual a informada para filtrar
     }
 
 
