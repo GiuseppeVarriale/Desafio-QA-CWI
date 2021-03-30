@@ -36,5 +36,25 @@ public class PutBookingRequest {
                 .put("booking/" + id);
     }
 
+    @Step("Alterar uma reserva com token incorreto")
+    public Response updateBookingWithWrongToken(int id, JSONObject payload) {
+        return given()
+                .header("Content-type", "application/json")
+                .header("Accept", "application/json")
+                .header("Cookie", "abc12341231")
+                .when()
+                .body(payload.toString())
+                .put("booking/" + id);
+    }
+
+    @Step("Alterar uma reserva sem token")
+    public Response updateBookingWithoutToken(int id, JSONObject payload) {
+        return given()
+                .header("Content-type", "application/json")
+                .header("Accept", "application/json")
+                .when()
+                .body(payload.toString())
+                .put("booking/" + id);
+    }
 
 }

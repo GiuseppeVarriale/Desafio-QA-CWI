@@ -51,11 +51,22 @@ public class GetBookingRequest {
     }
 
 
-    @Step("Buscar reservas com filtros.")
+    @Step("Buscar reservas usando filtros.")
     public Response getFilteredBookingIdList(Map<String, String> filtersMap) {
         String path = "booking?";
         path = path + filtersMap.entrySet().stream()
                 .map((filter) -> filter.getKey() + "=" + filter.getValue()).collect(Collectors.joining("&"));
+
+        return given()
+                .header("Content-Type", "application/json")
+                .when()
+                .get(path);
+
+    }
+
+    @Step("Buscar reservas usando filtro checkout e checkout.")
+    public Response getFilteredByCheckoutCheckoutBookingIdList(String checkoutDate) {
+        String path = "booking?checkout=" + checkoutDate + "&checkout=" + checkoutDate;
 
         return given()
                 .header("Content-Type", "application/json")

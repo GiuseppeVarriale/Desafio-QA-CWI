@@ -1,4 +1,4 @@
 package br.com.treinamentoapiproject.suites;
 
-public interface Acceptance {
+public interface Acceptance extends AllTests {
 }

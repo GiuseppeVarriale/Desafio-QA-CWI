@@ -1,4 +1,4 @@
 package br.com.treinamentoapiproject.suites;
 
-public interface HealthCheck {
+public interface HealthCheck extends AllTests{
 }

@@ -1,6 +1,7 @@
 package br.com.treinamentoapiproject.tests.booking.tests;
 
 import br.com.treinamentoapiproject.suites.Acceptance;
+import br.com.treinamentoapiproject.suites.E2e;
 import br.com.treinamentoapiproject.tests.base.tests.BaseTest;
 import br.com.treinamentoapiproject.tests.booking.requests.GetBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.requests.PutBookingRequest;
@@ -13,6 +14,8 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +33,7 @@ public class PutBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Alterar uma reserva utilizando token")
-    public void updateCurrentBookingUsingToken() throws Exception {
+    public void updateBookingUsingToken() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
         int id = getBookingRequest.getAnExistingBookingId();
@@ -53,7 +56,7 @@ public class PutBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Alterar uma reserva utilizando basic authorization")
-    public void updateCurrentBookingUsingBasicAuth() throws Exception {
+    public void updateBookingUsingBasicAuth() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
         int id = getBookingRequest.getAnExistingBookingId();
@@ -71,5 +74,57 @@ public class PutBookingTest extends BaseTest {
                 .body("additionalneeds", equalTo(payload.get("additionalneeds")));
     }
 
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(E2e.class)
+    @DisplayName("Alterar uma reserva sem token")
+    public void updateBookingWithoutToken() throws Exception {
+
+        JSONObject payload = Utils.validPayloadBooking();
+        int id = getBookingRequest.getAnExistingBookingId();
+
+        putBookingRequest.updateBookingWithoutToken(id, payload)
+                .then()
+                .statusCode(401)
+                .time(lessThan(2L), TimeUnit.SECONDS);
+
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(E2e.class)
+    @DisplayName("Alterar uma reserva utilizando token incorreto")
+    public void updateBookingUsingWrongToken() throws Exception {
+
+        JSONObject payload = Utils.validPayloadBooking();
+        int id = getBookingRequest.getAnExistingBookingId();
+
+        putBookingRequest.updateBookingWithWrongToken(id, payload)
+                .then()
+                .statusCode(401);
+
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(E2e.class)
+    @DisplayName("Alterar uma reserva Inexistente utilizando token")
+    public void updateAnInexistentBooking() throws Exception {
+
+        JSONObject payload = Utils.validPayloadBooking();
+        List<Integer> ids = getBookingRequest.allBookings()
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0))
+                .extract()
+                .jsonPath().getList("bookingid");
+
+        int id = Collections.max(ids) + 10; //Soma 10 a id com a maior número da lista
+
+        putBookingRequest.updateBookingWithToken(id, payload)
+                .then()
+                .statusCode(404);
+        //alinhar com equipe! novamente código 405
+    }
 
 }
