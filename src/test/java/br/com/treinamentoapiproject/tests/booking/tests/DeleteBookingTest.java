@@ -7,6 +7,7 @@ import br.com.treinamentoapiproject.tests.booking.requests.DeleteBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.requests.GetBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.requests.PostBookingRequest;
 import br.com.treinamentoapiproject.utils.Utils;
+import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
@@ -29,7 +30,9 @@ public class DeleteBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
-    @DisplayName("Excluir uma reserva utilizando token")
+    @DisplayName("Excluir um reserva com sucesso utilizando token")
+    @Description("Teste consiste em logar, criar uma reserva, avaliar se foi criada com sucesso 201, apagar a mesma," +
+            " verificar se o codigo foi 200, procurar a mesma, verificar se o retorno foi 404")
     public void deleteBookingUsingToken() throws Exception {
 
         int createdBookingId = postBookingRequest.createBooking(Utils.validPayloadBooking())
@@ -50,7 +53,9 @@ public class DeleteBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.BLOCKER)
     @Category(E2e.class)
-    @DisplayName("Não permitir excluir uma reserva sem utilizar autenticação")
+    @DisplayName("Tentar excluir uma reserva sem autorização e não conseguir")
+    @Description("Teste consistem e criar um registro, verificar se retornou 201, tentar apagar sem enviar autenticação," +
+            "receber código 401, verificar se o registro criado ainda existe e receber o código 200,")
     public void deleteBookingNoAuthentication() throws Exception {
 
         int createdBookingId = postBookingRequest.createBooking(Utils.validPayloadBooking())
@@ -70,7 +75,9 @@ public class DeleteBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Exibir erro 404 ao excluir uma reserva Inexistente")
+    @DisplayName("Tentar excluir um reserva que não existe e exibir erro 404")
+    @Description("Teste consistem em fazer uma busca de ids existente, pegar o valor mais alto e tentar excluir um registro" +
+            "acima deste range, receber código 404")
     public void deleteInexistentBooking() throws Exception {
 
         List<Integer> ids = getbookingRequest.allBookings()

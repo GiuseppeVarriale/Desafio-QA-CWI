@@ -51,7 +51,7 @@ public class Utils {
         return payload;
     }
 
-
+    @Step("Valida se a data é anterior ou igual que a data a sua direita nos argumentos")
     public static Boolean dateIsBeforeOrEqualThan(String toCompare, String control) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date dateToCompare = format.parse(toCompare);
@@ -60,7 +60,7 @@ public class Utils {
         return dateToCompare.before(dateControl) || dateToCompare.equals(control);
     }
 
-
+    @Step("Valida se a data é posterior ou igual que a data a sua direita nos argumentos")
     public static Boolean dateIsAfterOrEqualThan(String toCompare, String control) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date dateToCompare = format.parse(toCompare);

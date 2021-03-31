@@ -18,10 +18,10 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         BaseTest.class,
         GetPingTest.class,
+        PostAuthTest.class,
         GetBookingTest.class,
         PostBookingTest.class,
         PutBookingTest.class,
-        PostAuthTest.class,
         DeleteBookingTest.class
 })
 public class AllTests {

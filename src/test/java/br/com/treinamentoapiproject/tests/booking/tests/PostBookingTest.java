@@ -6,16 +6,16 @@ import br.com.treinamentoapiproject.tests.base.tests.BaseTest;
 import br.com.treinamentoapiproject.tests.booking.requests.GetBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.requests.PostBookingRequest;
 import br.com.treinamentoapiproject.utils.Utils;
+import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
-import io.qameta.allure.Step;
+
 import io.qameta.allure.junit4.DisplayName;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.lang.annotation.Target;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -30,6 +30,10 @@ public class PostBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Criar uma reserva")
+    @Description("Teste consiste em criar uma nova reserva usando um payload válido e completo, receber retorno 201, " +
+            "validar os dados do body com os enviados no payload, extrair a id retornada, buscar a id nos registros," +
+            "validar se ela existe e o firstname é o mesmo que foi enviado no payload para garantir que está criado" +
+            "no banco e não foi só retornado no body")
     public void criarReserva() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -55,8 +59,10 @@ public class PostBookingTest extends BaseTest {
 
     @Test
     @Severity(SeverityLevel.NORMAL)
-    @Category(Acceptance.class)
-    @DisplayName("Tentar criar uma reserva com parâmetros a mais no payload")
+    @Category(E2e.class)
+    @DisplayName("Criar uma reserva enviando mais parâmetros no payload da reserva e receber código 400")
+    @Description("Teste consiste em gerar um payload válido e completo, adicionar um parâmentro excessivo" +
+            " tentar criar uma reserva usando esté payload e validar que receberá o código 400")
     public void createBookingWithMorePayloadParameterThanExpected() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -72,9 +78,13 @@ public class PostBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
     @DisplayName("Criar 3 reservas seguidas")
+    @Description("Teste consiste em criar 3 reservas consecutivas usando payloads válidos e completos, em cada um deles" +
+            " receber retorno 201, validar os dados do body com os enviados no payload, extrair a id retornada, buscar" +
+            " a id nos registros, validar se ela existe e o firstname é o mesmo que foi enviado no payload para garantir" +
+            " que está criado no banco e não foi só retornado no body")
     public void createBookingConsecutive() throws Exception {
 
-        for(int i = 0; i <3; i++){
+        for (int i = 0; i < 3; i++) {
             criarReserva();
         }
     }
@@ -82,7 +92,11 @@ public class PostBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Tentar criar uma reserva com dados de tipagem erradas nos campos")
+    @DisplayName("Validar retorno 500 quando o payload da reserva estiver inválido(tipagem de dados)")
+    @Description("Teste consiste em testar a criação de reservas com campos de tipagem errada, por exemplo" +
+            "campo firstname espera uma string e enviar inteiro, campo totalprice espera um numero e recebe uma string" +
+            "e assim por diante, esse teste testa todos os campos com dados de tipagem errada, e espera que o servidor" +
+            "retorne o código 500")
     public void createBookingPayloadFieldsWrongDataType() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -110,10 +124,10 @@ public class PostBookingTest extends BaseTest {
         payload = Utils.validPayloadBooking();
         payload.put("totalprice", numero);
 
-      postBookingRequest.createBooking(payload)
-               .then().assertThat()
-               .statusCode(500); //alinhar com equipe, verificar se estão tratanto e atualizar a documentação, ou se abrir bug
-                                  // caso estejam tratando no software modificar para 201 e validar se o body está retornando um número no campo
+        postBookingRequest.createBooking(payload)
+                .then().assertThat()
+                .statusCode(500); //alinhar com equipe, verificar se estão tratanto e atualizar a documentação, ou se abrir bug
+        // caso estejam tratando no software modificar para 201 e validar se o body está retornando um número no campo
 
 
         payload = Utils.validPayloadBooking();
@@ -131,7 +145,7 @@ public class PostBookingTest extends BaseTest {
                 .then()
                 .assertThat()
                 .statusCode(500);//alinhar com equipe, verificar se estão tratanto e atualizar a documentação, ou se abrir bug
-                                 // caso estejam tratando no software modificar para 201 e validar se o body está retornando um string no campo
+        // caso estejam tratando no software modificar para 201 e validar se o body está retornando um string no campo
 
         payload = Utils.validPayloadBooking();
         bookingDates.put("checkin", inteiro);
@@ -154,11 +168,12 @@ public class PostBookingTest extends BaseTest {
     }
 
 
-
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Tentar criar uma reserva com o Header Accept incorreto")
+    @DisplayName("Validar retorno 418 quando o header Accept for inválido")
+    @Description("Teste consiste em tentar criar uma reserva enviando o campo Accept inválido, e valida se o servidor" +
+            "irá retornar código 408")
     public void createBookingWrongAcceptHeader() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();

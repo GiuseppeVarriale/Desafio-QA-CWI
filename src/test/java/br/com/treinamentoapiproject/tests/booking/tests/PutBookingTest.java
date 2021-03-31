@@ -6,6 +6,7 @@ import br.com.treinamentoapiproject.tests.base.tests.BaseTest;
 import br.com.treinamentoapiproject.tests.booking.requests.GetBookingRequest;
 import br.com.treinamentoapiproject.tests.booking.requests.PutBookingRequest;
 import br.com.treinamentoapiproject.utils.Utils;
+import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
@@ -33,6 +34,9 @@ public class PutBookingTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
     @DisplayName("Alterar uma reserva utilizando token")
+    @Description("Teste consiste em buscar uma reserva existente, tentar alterar a mesma usando um Token válido, com" +
+            " um payload completo, verificar se o código é 201 é retornado, e se os dados do body batem com os " +
+            " no payload")
     public void updateBookingUsingToken() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -55,7 +59,10 @@ public class PutBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(Acceptance.class)
-    @DisplayName("Alterar uma reserva utilizando basic authorization")
+    @DisplayName("Alterar uma reserva utilizando Basic Auth")
+    @Description("Teste consiste em buscar uma reserva existente, tentar alterar a mesma usando basic Auth, com um " +
+            "payload completo, verificar se o código é 201 é retornado, e se os dados do body batem com os enviados " +
+            "no payload")
     public void updateBookingUsingBasicAuth() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -77,7 +84,9 @@ public class PutBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Alterar uma reserva sem token")
+    @DisplayName("Tentar alterar uma reserva quando o token não for enviado e receber status 401")
+    @Description("Teste consiste em buscar uma reserva existente, tentar alterar a mesma sem autenticação, " +
+            " com um payload completo e receber um retorno 401 " )
     public void updateBookingWithoutToken() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -85,15 +94,17 @@ public class PutBookingTest extends BaseTest {
 
         putBookingRequest.updateBookingWithoutToken(id, payload)
                 .then()
-                .statusCode(401)
-                .time(lessThan(2L), TimeUnit.SECONDS);
+                .statusCode(401);
+
 
     }
 
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Alterar uma reserva utilizando token incorreto")
+    @DisplayName("Tentar alterar uma reserva quando o token enviado for inválido e receber status 401")
+    @Description("Teste consiste em buscar uma reserva existente, tentar alterar a mesma com token inválido,com um " +
+            "payload completo e receber um retorno 401" )
     public void updateBookingUsingWrongToken() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -108,7 +119,10 @@ public class PutBookingTest extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @Category(E2e.class)
-    @DisplayName("Alterar uma reserva Inexistente utilizando token")
+    @DisplayName("Tentar alterar uma reserva que não existe")
+    @Description("Teste consiste em buscar uma lista de reservas existentes, pegar o valor mais alto da lista, somar " +
+            "um valor para ficar fora do range de ids exisentes, tentar alterar uma reserva com esse id e receber o " +
+            "código 404" )
     public void updateAnInexistentBooking() throws Exception {
 
         JSONObject payload = Utils.validPayloadBooking();
@@ -124,7 +138,7 @@ public class PutBookingTest extends BaseTest {
         putBookingRequest.updateBookingWithToken(id, payload)
                 .then()
                 .statusCode(404);
-        //alinhar com equipe! novamente código 405
+        //alinhar com equipe está recebendo código 405
     }
 
 }
