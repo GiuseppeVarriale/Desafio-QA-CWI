@@ -184,8 +184,78 @@ public class PostBookingTest extends BaseTest {
                 .statusCode(418);
         //Alinhar com a equipe se realmente era pra ser este código,pelo que vi na internet provavelmente seria 406
         //temos alguma cafeteira fazendo requisição? falando nisso bora buscar um café
+    }
 
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Category(E2e.class)
+    @DisplayName("Validar retorno 500 quando o payload tiver atributos faltando(chave e valor)")
+    @Description("Teste consiste em testar a criação de reservas um atributo faltando(chave : valor), por exemplo" +
+            "payload faltando a chave first name, e o valor do mesmo, espera-se que o servidor retorne o código 500")
+            //alinhar com equipe, foi usado código 500 levando em referência testes de payload anteriores, porém talvez
+            //seria mais correto código 400, já que o erro não é do servidor
+    public void createBookingPayloadKeysValuesMissing() throws Exception {
 
+        JSONObject payload = Utils.validPayloadBooking();
+        JSONObject bookingDates = new JSONObject();
+
+        payload.remove("firstname");
+
+        postBookingRequest.createBooking(payload)
+                .then()
+                .assertThat()
+                .statusCode(500);
+
+        payload = Utils.validPayloadBooking();
+        payload.remove("lastname");
+
+        postBookingRequest.createBooking(payload)
+                .then()
+                .assertThat()
+                .statusCode(500);
+
+        payload = Utils.validPayloadBooking();
+        payload.remove("totalprice");
+
+        postBookingRequest.createBooking(payload)
+                .then().assertThat()
+                .statusCode(500);
+
+        payload = Utils.validPayloadBooking();
+        payload.remove("depositpaid");
+
+        postBookingRequest.createBooking(payload)
+                .then().assertThat()
+                .statusCode(500);
+
+        payload = Utils.validPayloadBooking();
+        payload.remove("additionalneeds");
+
+        postBookingRequest.createBooking(payload)
+                .then()
+                .assertThat()
+                .statusCode(500);//alinhar com equipe, verificar se estão tratando como opcional, definir se modificar
+                                //software ou documentações
+
+        payload = Utils.validPayloadBooking();
+        payload.remove("bookingdates");
+        bookingDates.put("checkout", "2027-01-12");
+        payload.put("bookingdates", bookingDates);
+
+        postBookingRequest.createBooking(payload)
+                .then()
+                .assertThat()
+                .statusCode(500);
+
+        payload.remove("bookingdates");
+        bookingDates.put("checkin", "2015-04-12");
+        bookingDates.remove("checkout");
+        payload.put("bookingdates", bookingDates);
+
+        postBookingRequest.createBooking(payload)
+                .then()
+                .assertThat()
+                .statusCode(500);
     }
 
 }
